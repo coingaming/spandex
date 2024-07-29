@@ -66,6 +66,7 @@ defmodule Spandex.Mixfile do
       {:makeup, "~> 1.0", only: :dev},
       {:makeup_elixir, "~> 0.16", only: :dev},
       {:decorator, "~> 1.2", optional: true},
+      {:plug, "~> 1.0"}
     ]
   end
 end
