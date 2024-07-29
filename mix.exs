@@ -2,7 +2,7 @@ defmodule Spandex.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/spandex-project/spandex"
-  @version "3.2.0"
+  @version "3.3.0"
 
   def project do
     [
@@ -66,8 +66,6 @@ defmodule Spandex.Mixfile do
       {:makeup, "~> 1.0", only: :dev},
       {:makeup_elixir, "~> 0.16", only: :dev},
       {:decorator, "~> 1.2", optional: true},
-      {:optimal, "~> 0.3.3"},
-      {:plug, "~> 1.0"}
     ]
   end
 end

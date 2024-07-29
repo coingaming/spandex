@@ -55,11 +55,6 @@ defmodule Spandex.Test.SpandexTest do
       assert {:error, :disabled} = Spandex.start_trace("root_span", :disabled)
     end
 
-    test "returns an error if invalid options are specified" do
-      assert {:error, validation_errors} = Spandex.start_trace("root_span", @base_opts)
-      assert {:service, "is required"} in validation_errors
-    end
-
     test "adds span_id, trace_id to log metadata" do
       opts = @base_opts ++ @span_opts
 
@@ -97,15 +92,6 @@ defmodule Spandex.Test.SpandexTest do
       assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
       assert {:ok, %Span{} = span} = Spandex.start_span("span_name", @base_opts)
       assert %Span{name: "span_name", service: :test_service, service_version: "v1", resource: "test_resource"} = span
-    end
-
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
-
-      assert {:error, validation_errors} = Spandex.start_span("span_name", @base_opts ++ [type: "not an atom"])
-
-      assert {:type, "must be of type :atom"} in validation_errors
     end
 
     test "adds span_id, trace_id to log metadata" do
@@ -154,15 +140,6 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if tracing is disabled" do
       assert {:error, :disabled} = Spandex.update_span(:disabled)
-    end
-
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
-
-      assert {:error, validation_errors} = Spandex.update_span(@base_opts ++ [type: "not an atom"])
-
-      assert {:type, "must be of type :atom"} in validation_errors
     end
   end
 
@@ -223,15 +200,6 @@ defmodule Spandex.Test.SpandexTest do
     test "returns an error if tracing is disabled" do
       assert {:error, :disabled} = Spandex.update_top_span(:disabled)
     end
-
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
-
-      assert {:error, validation_errors} = Spandex.update_top_span(@base_opts ++ [type: "not an atom"])
-
-      assert {:type, "must be of type :atom"} in validation_errors
-    end
   end
 
   describe "Spandex.update_all_spans/1" do
@@ -257,15 +225,6 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if tracing is disabled" do
       assert {:error, :disabled} = Spandex.update_all_spans(:disabled)
-    end
-
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
-
-      assert {:error, validation_errors} = Spandex.update_all_spans(@base_opts ++ [type: "not an atom"])
-
-      assert {:type, "must be of type :atom"} in validation_errors
     end
   end
 
@@ -438,20 +397,6 @@ defmodule Spandex.Test.SpandexTest do
     test "returns an error if tracing is disabled" do
       assert {:error, :disabled} = Spandex.span_error(@runtime_error, @fake_stacktrace, :disabled)
     end
-
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ @span_opts
-      assert {:ok, %Trace{id: _trace_id}} = Spandex.start_trace("root_span", opts)
-
-      assert {:error, validation_errors} =
-               Spandex.span_error(
-                 @runtime_error,
-                 @fake_stacktrace,
-                 @base_opts ++ [type: "not an atom"]
-               )
-
-      assert {:type, "must be of type :atom"} in validation_errors
-    end
   end
 
   describe "Spandex.current_trace_id/1" do
@@ -568,14 +513,6 @@ defmodule Spandex.Test.SpandexTest do
       assert {:error, :disabled} == Spandex.continue_trace("span_name", span_context, :disabled)
     end
 
-    test "returns an error if invalid options are specified" do
-      opts = @base_opts ++ [type: "not an atom"]
-      span_context = %SpanContext{trace_id: 123, parent_id: 456}
-      assert {:error, validation_errors} = Spandex.continue_trace("span_name", span_context, opts)
-
-      assert {:type, "must be of type :atom"} in validation_errors
-    end
-
     test "adds span_id, trace_id to log metadata" do
       opts = @base_opts ++ @span_opts
       span_context = %SpanContext{trace_id: 123, parent_id: 456}
@@ -612,13 +549,6 @@ defmodule Spandex.Test.SpandexTest do
 
     test "returns an error if tracing is disabled" do
       assert {:error, :disabled} == Spandex.continue_trace("span_name", 123, 456, :disabled)
-    end
-
-    test "returns an error if invalid options are specified" do
-      assert {:error, validation_errors} =
-               Spandex.continue_trace("span_name", 123, 456, @base_opts ++ [type: "not an atom"])
-
-      assert {:type, "must be of type :atom"} in validation_errors
     end
 
     test "adds span_id, trace_id to log metadata" do
@@ -663,19 +593,6 @@ defmodule Spandex.Test.SpandexTest do
       existing_span = %Span{id: 456, trace_id: 123, name: "existing"}
 
       assert {:error, :disabled} == Spandex.continue_trace_from_span("root_span", existing_span, :disabled)
-    end
-
-    test "returns an error if invalid options are specified" do
-      existing_span = %Span{id: 456, trace_id: 123, name: "existing"}
-
-      assert {:error, validation_errors} =
-               Spandex.continue_trace_from_span(
-                 "span_name",
-                 existing_span,
-                 @base_opts ++ [type: "not an atom"]
-               )
-
-      assert {:type, "must be of type :atom"} in validation_errors
     end
   end
 
